@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat with My LLM</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f8f9fa; }
+    #chat-box { border: 1px solid #ccc; padding: 20px; height: 400px; overflow-y: auto; background: white; }
+    .message { margin: 10px 0; }
+    .user { color: blue; font-weight: bold; }
+    .bot { color: green; font-weight: bold; }
+    input[type=text] { width: 80%; padding: 10px; }
+    button { padding: 10px; }
+  </style>
+</head>
+<body>
+  <h1>💬 Chat with My LLM Agent</h1>
+  <div id="chat-box"></div>
+  <br/>
+  <input type="text" id="user-input" placeholder="Type your message..." autofocus onkeypress="handleKeyPress(event)" />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const chatBox = document.getElementById("chat-box");
+
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      chatBox.innerHTML += `<div class="message"><span class="user">You:</span> ${userMessage}</div>`;
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMessage })
+      });
+      const data = await response.json();
+
+      // Format the reply nicely - if it's an object, stringify it with formatting
+      let replyText = data.reply;
+      if (typeof replyText === 'object') {
+        replyText = JSON.stringify(replyText, null, 2);
+      }
+      
+      // Escape HTML to prevent XSS
+      const escapedText = replyText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      chatBox.innerHTML += `<div class="message"><span class="bot">Bot:</span> <pre style="white-space: pre-wrap; font-family: inherit; background: #f5f5f5; padding: 10px; border-radius: 4px;">${escapedText}</pre></div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>

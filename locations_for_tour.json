@@ -1,0 +1,72 @@
+[
+    {
+        "Obchod_ID": 1,
+        "Město": "Blatnice pod Svatým Antonínkem",
+        "Jméno_Manažera": "Jan Novák",
+        "Tržby_v_Kc": 150000,
+        "Lat": 48.947,
+        "Lng": 16.826,
+        "Dostupnost_Utery_Od": "10:30:00",
+        "Dostupnost_Utery_Do": "18:00:00",
+        "Dostupnost_Streda_Od": "10:30:00",
+        "Dostupnost_Streda_Do": "18:00:00",
+        "Dostupnost_Ctvrtek_Od": "10:30:00",
+        "Dostupnost_Ctvrtek_Do": "18:00:00"
+    },
+    {
+        "Obchod_ID": 4,
+        "Město": "Slavkov u Brna",
+        "Jméno_Manažera": "Eva Černá",
+        "Tržby_v_Kc": 120000,
+        "Lat": 49.188,
+        "Lng": 16.872,
+        "Dostupnost_Utery_Od": "09:30:00",
+        "Dostupnost_Utery_Do": "16:00:00",
+        "Dostupnost_Streda_Od": "09:30:00",
+        "Dostupnost_Streda_Do": "16:00:00",
+        "Dostupnost_Ctvrtek_Od": "09:30:00",
+        "Dostupnost_Ctvrtek_Do": "16:00:00"
+    },
+    {
+        "Obchod_ID": 7,
+        "Město": "Dolní Kounice",
+        "Jméno_Manažera": "Petr Svoboda",
+        "Tržby_v_Kc": 90000,
+        "Lat": 49.02,
+        "Lng": 16.572,
+        "Dostupnost_Utery_Od": "11:00:00",
+        "Dostupnost_Utery_Do": "16:00:00",
+        "Dostupnost_Streda_Od": "11:00:00",
+        "Dostupnost_Streda_Do": "16:00:00",
+        "Dostupnost_Ctvrtek_Od": "11:00:00",
+        "Dostupnost_Ctvrtek_Do": "16:00:00"
+    },
+    {
+        "Obchod_ID": 12,
+        "Město": "Ivančice",
+        "Jméno_Manažera": "Lucie Bílá",
+        "Tržby_v_Kc": 110000,
+        "Lat": 49.033,
+        "Lng": 16.595,
+        "Dostupnost_Utery_Od": "10:30:00",
+        "Dostupnost_Utery_Do": "16:30:00",
+        "Dostupnost_Streda_Od": "10:30:00",
+        "Dostupnost_Streda_Do": "16:30:00",
+        "Dostupnost_Ctvrtek_Od": "10:30:00",
+        "Dostupnost_Ctvrtek_Do": "16:30:00"
+    },
+    {
+        "Obchod_ID": 19,
+        "Město": "Bzenec",
+        "Jméno_Manažera": "Martin Hájek",
+        "Tržby_v_Kc": 95000,
+        "Lat": 48.97,
+        "Lng": 17.28,
+        "Dostupnost_Utery_Od": "09:30:00",
+        "Dostupnost_Utery_Do": "16:00:00",
+        "Dostupnost_Streda_Od": "09:30:00",
+        "Dostupnost_Streda_Do": "16:00:00",
+        "Dostupnost_Ctvrtek_Od": "09:30:00",
+        "Dostupnost_Ctvrtek_Do": "16:00:00"
+    }
+]
