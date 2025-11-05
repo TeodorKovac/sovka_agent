@@ -41,8 +41,8 @@ venv.bak/
 Thumbs.db
 
 # Project specific
-*.csv
 !prompts/prompt.csv
+!data/mock_retail_data.csv
 # locations_for_tour.json - uncomment if you want to ignore this file
 
 # Poetry
