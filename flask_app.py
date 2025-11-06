@@ -67,7 +67,6 @@ def create_app() -> Flask:
         print("DEBUG: Reply structure:", json.dumps(reply, indent=2, ensure_ascii=False))
         
         #load those 5 stores lat and lng for routing
-        
         data = reply.get("Doporučené_obchody_k_návštěvě")
         
         with open("locations_for_tour.json", "w", encoding="utf-8") as f:

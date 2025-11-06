@@ -1,10 +1,12 @@
 import pandas as pd
 from faker import Faker
 import random
+import re
 from datetime import datetime, timedelta, time
 import time as time_module  # Alias to avoid conflict with datetime.time
 from faker.providers import BaseProvider
 from geopy.geocoders import Nominatim
+import unicodedata
 geolocator = Nominatim(user_agent="cz_city_locator")
 class CzechRegionCityProvider(BaseProvider):
     # Example lists for regions — customize as needed
@@ -55,9 +57,38 @@ def working_hour_timestamp(fake: Faker,start_hour=9, end_hour=17):
     )
 
 def manager_time_availability(fake: Faker) -> tuple[time, time]:
-    dostupnost_utery_od = round_time_to_30min(working_hour_timestamp(fake, start_hour=9, end_hour=10).time())
-    dostupnost_utery_do = round_time_to_30min(working_hour_timestamp(fake, start_hour=14, end_hour=17).time())
-    return dostupnost_utery_od, dostupnost_utery_do
+    dostupnost_od = round_time_to_30min(working_hour_timestamp(fake, start_hour=9, end_hour=10).time())
+    dostupnost_do = round_time_to_30min(working_hour_timestamp(fake, start_hour=14, end_hour=17).time())
+    return dostupnost_od, dostupnost_do
+
+def get_email(string: str) -> str:
+    """
+    Generate an email address from a name string.
+    Removes common academic and professional titles before generating the email.
+    
+    Args:
+        string: Name string that may contain titles (e.g., "Dr. Jan Novák", "Prof. Ing. Marie Svobodová")
+    
+    Returns:
+        Email address in format: firstnamelastname@example.com
+    """
+    # Common titles to remove (Czech and international) - with word boundaries
+    titles = [
+        r'\bDr\.?\s*', r'\bProf\.?\s*', r'\bIng\.?\s*', r'\bMUDr\.?\s*', r'\bPhDr\.?\s*',
+        r'\bRNDr\.?\s*', r'\bMgr\.?\s*', r'\bBc\.?\s*', r'\bPh\.?D\.?\s*', r'\bPhD\.?\s*',
+        r'\bDoc\.?\s*', r'\bThDr\.?\s*', r'\bJUDr\.?\s*', r'\bMVDr\.?\s*', r'\bPaedDr\.?\s*',
+        r'\bPharmDr\.?\s*', r'\bThLic\.?\s*', r'\bThMgr\.?\s*', r'\bCSs\.?\s*'
+    ]
+    
+    # Remove titles (anywhere in the string)
+    cleaned = string
+    for title_pattern in titles:
+        cleaned = re.sub(title_pattern, '', cleaned, flags=re.IGNORECASE)
+    
+    # Remove commas and extra whitespace, then convert to email format
+    cleaned = unicodedata.normalize('NFD', cleaned)
+    cleaned = re.sub(r'[^\w]+', '', cleaned.strip())
+    return cleaned.lower() + "@retail.com"
 
 
 def generate_mock_data() -> pd.DataFrame:
@@ -77,7 +108,8 @@ def generate_mock_data() -> pd.DataFrame:
 
     for obchod_id in range(1, num_stores + 1):
         mesto = fake.regional_city()  
-        jmeno_manazera = fake.name()  
+        jmeno_manazera = fake.name()
+        email_manazera = get_email(jmeno_manazera) #tohle jeste doladit, aby to bylo validni email
         trzby_v_kc = round(random.uniform(200000, 700000), 2)
         location = geolocator.geocode(f"{mesto}, Czech Republic") # Now it's a method on the fake object
         lat = location.latitude
@@ -86,6 +118,8 @@ def generate_mock_data() -> pd.DataFrame:
         prumerna_trzba_na_transakci = round(trzby_v_kc / pocet_transakci, 2)
         trzby_za_predesly_tyden = round(random.uniform(200000, 700000), 2)
         zmena_oproti_predeslemu_tydnu = round((trzby_v_kc - trzby_za_predesly_tyden) / trzby_za_predesly_tyden * 100, 2)
+        dostupnost_zbozi = round(random.uniform(85, 100), 2) if zmena_oproti_predeslemu_tydnu > 0 else (100 + (45*zmena_oproti_predeslemu_tydnu/100))
+        dostupnost_personal = round(random.uniform(90, 100), 2) if zmena_oproti_predeslemu_tydnu > 0 else (100 + (35*zmena_oproti_predeslemu_tydnu/100))
         plneni_cilu = round(random.uniform(0.8, 1.2), 2)
         posledni_navsteva = working_hour_timestamp(fake).date()
         dostupnost_utery_od, dostupnost_utery_do = manager_time_availability(fake)
@@ -97,6 +131,7 @@ def generate_mock_data() -> pd.DataFrame:
             obchod_id,
             mesto,
             jmeno_manazera,
+            email_manazera,
             trzby_v_kc,
             lat,
             lng,
@@ -104,6 +139,8 @@ def generate_mock_data() -> pd.DataFrame:
             prumerna_trzba_na_transakci,
             trzby_za_predesly_tyden,
             zmena_oproti_predeslemu_tydnu,
+            dostupnost_zbozi,
+            dostupnost_personal,    
             plneni_cilu,
             posledni_navsteva,
             dostupnost_utery_od,
@@ -116,10 +153,10 @@ def generate_mock_data() -> pd.DataFrame:
 
     # Create DataFrame
     columns = [
-        "Obchod_ID","Město","Jméno_Manažera",
+        "Obchod_ID","Město","Jméno_Manažera","Email_Manažera",
         "Tržby_v_Kc","Lat","Lng","Počet_Transakcí","Průměrná_Tržba_na_Transakci",
         "Tržby_za_Předešlý_Týden",
-        "Změna_Oproti_Předešlému_Týdnu (%)", "Plnění_Cílů",
+        "Změna_Oproti_Předešlému_Týdnu (%)", "Dostupnost_Zboží (%)", "Dostupnost_Personal (%)", "Plnění_Cílů",
         "Poslední_Návštěva",
         "Dostupnost_Utery_Od",
         "Dostupnost_Utery_Do",
